@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AgendaYA — Booking, Dashboard y Notificaciones</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- Barra de simulación: permite alternar entre la experiencia del cliente y la del administrador -->
+<header class="topbar">
+  <div class="topbar-brand">
+    <span class="topbar-dot"></span>
+    <span>AgendaYA · Prototipo</span>
+  </div>
+  <nav class="topbar-nav">
+    <button class="nav-btn active" id="nav-cliente" data-cy="nav-cliente">Vista Cliente · Mobile</button>
+    <button class="nav-btn" id="nav-admin" data-cy="nav-admin">Vista Administrador · Desktop</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ============================================================ -->
+  <!-- VISTA CLIENTE (MOBILE) — Módulo 4: Proceso de Reserva         -->
+  <!-- ============================================================ -->
+  <section id="vista-cliente" class="vista" data-cy="vista-cliente">
+    <p class="vista-caption">Simulación de la experiencia del usuario invitado desde su celular, al abrir <code>agendaya.com/agenda/dra-gomez</code></p>
+
+    <div class="phone-frame">
+      <div class="phone-screen">
+
+        <div class="steps-bar" data-cy="steps-bar">
+          <div class="step-dot" data-cy="step-dot-1">1</div>
+          <div class="step-line"></div>
+          <div class="step-dot" data-cy="step-dot-2">2</div>
+          <div class="step-line"></div>
+          <div class="step-dot" data-cy="step-dot-3">3</div>
+          <div class="step-line"></div>
+          <div class="step-dot" data-cy="step-dot-4">4</div>
+        </div>
+
+        <!-- PASO 1: Tipos de evento (US-01-01 / US-01-02) -->
+        <div class="paso" id="paso-1" data-cy="paso-1">
+          <div class="profesional-card">
+            <div class="avatar">DG</div>
+            <div>
+              <h2>Dra. Gómez</h2>
+              <p class="muted">Seleccioná el tipo de evento</p>
+            </div>
+          </div>
+
+          <div id="lista-eventos" class="lista-eventos" data-cy="lista-eventos"></div>
+          <p class="error-msg" id="error-sin-eventos" data-cy="error-sin-eventos" role="alert" hidden>No hay eventos disponibles para reservar.</p>
+
+          <div id="evento-no-disponible-wrap" data-cy="evento-no-disponible-wrap" hidden>
+            <p class="error-msg" id="error-evento-no-disponible" data-cy="error-evento-no-disponible" role="alert"></p>
+            <button class="btn-secondary" id="btn-volver-lista-eventos" data-cy="btn-volver-lista-eventos">Volver a la lista de eventos</button>
+          </div>
+        </div>
+
+        <!-- PASO 2: Fechas y horarios (US-01-05 / US-01-06) -->
+        <div class="paso" id="paso-2" data-cy="paso-2" hidden>
+          <button class="link-back" id="btn-volver-paso1" data-cy="btn-volver-paso1">&larr; Elegir otro evento</button>
+          <h2 id="evento-seleccionado-titulo" data-cy="evento-seleccionado-titulo">Elegí fecha y horario</h2>
+
+          <p class="error-msg" id="error-sin-fechas" data-cy="error-sin-fechas" role="alert" hidden></p>
+
+          <div class="dias-lista" id="dias-lista" data-cy="dias-lista"></div>
+
+          <p class="error-msg" id="error-horario-ocupado" data-cy="error-horario-ocupado" role="alert" hidden></p>
+
+          <div id="horarios-wrap" data-cy="horarios-wrap" hidden>
+            <p class="muted small">Horarios disponibles</p>
+            <div class="horarios-lista" id="horarios-lista" data-cy="horarios-lista"></div>
+          </div>
+
+          <p class="error-msg" id="error-sin-horarios" data-cy="error-sin-horarios" role="alert" hidden></p>
+
+          <button class="btn-primary" id="btn-confirmar-horario" data-cy="btn-confirmar-horario" disabled>Confirmar horario &rarr;</button>
+        </div>
+
+        <!-- PASO 3: Datos personales (US-01-04) -->
+        <div class="paso" id="paso-3" data-cy="paso-3" hidden>
+          <button class="link-back" id="btn-volver-paso2" data-cy="btn-volver-paso2">&larr; Cambiar fecha y hora</button>
+          <h2>Tus datos</h2>
+
+          <div class="resumen-mini" id="resumen-mini" data-cy="resumen-mini"></div>
+
+          <form id="form-datos" data-cy="form-datos" novalidate>
+            <div class="form-row-2">
+              <label>Nombre *
+                <input type="text" id="input-nombre" data-cy="input-nombre" autocomplete="given-name" placeholder="Ingresá tu nombre" />
+              </label>
+              <label>Apellido *
+                <input type="text" id="input-apellido" data-cy="input-apellido" autocomplete="family-name" placeholder="Ingresá tu apellido" />
+              </label>
+            </div>
+            <label>DNI *
+              <input type="text" id="input-dni" data-cy="input-dni" inputmode="numeric" placeholder="Número de documento" />
+            </label>
+            <label>Correo electrónico *
+              <input type="email" id="input-email" data-cy="input-email" autocomplete="email" placeholder="tu@email.com" />
+            </label>
+            <label>Teléfono (opcional)
+              <input type="tel" id="input-telefono" data-cy="input-telefono" autocomplete="tel" placeholder="+54..." />
+            </label>
+            <p class="error-msg" id="error-form-datos" data-cy="error-form-datos" role="alert" hidden></p>
+            <button type="submit" class="btn-primary" data-cy="btn-reservar">Reservar &rarr;</button>
+          </form>
+        </div>
+
+        <!-- PASO 4: Pendiente / verificación / confirmación / cancelación -->
+        <div class="paso" id="paso-4" data-cy="paso-4" hidden>
+
+          <!-- US-01-03 + US-03 (M04) -->
+          <div id="estado-pendiente" data-cy="estado-pendiente">
+            <div class="icono-ok">&#9993;</div>
+            <h2>Reserva enviada</h2>
+            <p class="muted" data-cy="mensaje-pendiente">Su reserva está pendiente de confirmación</p>
+            <div class="resumen-mini" id="resumen-final" data-cy="resumen-final"></div>
+            <p class="hint">Te enviamos un código de verificación a tu correo.</p>
+            <p class="hint hint-demo" id="codigo-demo-hint" data-cy="codigo-demo-hint"></p>
+
+            <label class="label-plain">Código de verificación (6 dígitos)
+              <input type="text" id="input-codigo" data-cy="input-codigo" maxlength="6" inputmode="numeric" autocomplete="one-time-code" placeholder="000000" />
+            </label>
+            <p class="error-msg" id="error-codigo" data-cy="error-codigo" role="alert" hidden></p>
+            <button class="btn-primary" id="btn-verificar-codigo" data-cy="btn-verificar-codigo">Verificar correo</button>
+          </div>
+
+          <!-- US-08 (M06): mail para confirmar -->
+          <div id="estado-verificado" data-cy="estado-verificado" hidden>
+            <div class="icono-ok">&#10003;</div>
+            <h2>Correo verificado</h2>
+            <p class="muted">Te enviamos un mail para confirmar tu reserva. Tenés 12 horas para hacerlo.</p>
+            <button class="btn-secondary" id="btn-simular-link-confirmacion" data-cy="btn-simular-link-confirmacion">Simular clic en "Confirmar Reserva" del mail</button>
+          </div>
+
+          <!-- US-01 (M04) Escenario 1 -->
+          <div id="estado-confirmada" data-cy="estado-confirmada" hidden>
+            <div class="icono-ok icono-grande">&#10003;</div>
+            <h2 data-cy="mensaje-confirmada">Su reserva se confirmó</h2>
+            <div class="resumen-mini" id="resumen-confirmada" data-cy="resumen-confirmada"></div>
+            <p class="hint">Se enviaron notificaciones a vos y al administrador.</p>
+            <button class="btn-danger-outline" id="btn-cancelar-reserva" data-cy="btn-cancelar-reserva">Cancelar reserva</button>
+            <button class="btn-secondary" id="btn-reabrir-link-confirmacion" data-cy="btn-reabrir-link-confirmacion">Volver a abrir el link de confirmación</button>
+            <button class="btn-secondary" id="btn-nueva-reserva-1" data-cy="btn-nueva-reserva-1">Hacer otra reserva</button>
+          </div>
+
+          <!-- US-01 (M04) Escenario 2 -->
+          <div id="estado-expirado" data-cy="estado-expirado" hidden>
+            <div class="icono-error">&#10060;</div>
+            <h2 data-cy="mensaje-expirada">Su reserva expiró</h2>
+            <p class="muted">El link de confirmación venció (12 hs). Te enviamos un mail con el detalle.</p>
+            <button class="btn-secondary" id="btn-nueva-reserva-2" data-cy="btn-nueva-reserva-2">Generar una nueva reserva</button>
+          </div>
+
+          <!-- US-02 (M04) Escenario 1 -->
+          <div id="estado-cancelada" data-cy="estado-cancelada" hidden>
+            <div class="icono-ok">&#10003;</div>
+            <h2 data-cy="mensaje-cancelada">Se canceló correctamente la cita</h2>
+            <p class="muted">Se notificó a vos y al administrador. El horario quedó disponible.</p>
+            <button class="btn-secondary" id="btn-reabrir-link-cancelacion" data-cy="btn-reabrir-link-cancelacion">Volver a abrir el link de cancelación</button>
+            <button class="btn-secondary" id="btn-nueva-reserva-3" data-cy="btn-nueva-reserva-3">Hacer una nueva reserva</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal confirmación de cancelación (US-02 M04) -->
+    <div class="modal-overlay" id="modal-cancelar" data-cy="modal-cancelar" hidden>
+      <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-cancelar-titulo">
+        <h3 id="modal-cancelar-titulo">¿Cancelar esta reserva?</h3>
+        <dl class="detalle-lista" data-cy="modal-cancelar-detalle">
+          <dt>Cliente</dt><dd data-cy="cancelar-detalle-cliente"></dd>
+          <dt>Fecha y hora</dt><dd data-cy="cancelar-detalle-fecha"></dd>
+          <dt>Anfitrión</dt><dd data-cy="cancelar-detalle-anfitrion"></dd>
+          <dt>Ubicación</dt><dd data-cy="cancelar-detalle-ubicacion"></dd>
+        </dl>
+        <div class="modal-actions">
+          <button class="btn-secondary" id="btn-mantener-reserva" data-cy="btn-mantener-reserva">Mantener reserva</button>
+          <button class="btn-danger" id="btn-confirmar-cancelacion" data-cy="btn-confirmar-cancelacion">Cancelar esta reserva</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- VISTA ADMINISTRADOR (DESKTOP) — Dashboard + Módulo 6          -->
+  <!-- ============================================================ -->
+  <section id="vista-admin" class="vista" data-cy="vista-admin" hidden>
+    <div class="admin-app">
+
+      <!-- Barra superior del administrador -->
+      <header class="admin-topbar">
+        <div class="admin-brand">
+          <svg class="ico ico-brand" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4M9 15l2 2 4-4"/></svg>
+          <span>AgendaYA</span>
+        </div>
+
+        <div class="buscador" data-cy="buscador">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input type="search" id="buscador-global" data-cy="buscador-global" placeholder="Buscar en AgendaYA..." autocomplete="off" aria-label="Buscar en AgendaYA" />
+          <div class="buscador-resultados" id="buscador-resultados" data-cy="buscador-resultados" hidden></div>
+        </div>
+
+        <div class="admin-topbar-right">
+          <button class="btn-icono" id="btn-notificaciones" data-cy="btn-notificaciones" aria-label="Alertas">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+            <span class="badge" id="badge-alertas" data-cy="badge-alertas" hidden></span>
+          </button>
+          <span class="separador-vertical"></span>
+          <div class="menu-usuario">
+            <button class="btn-menu-usuario" id="btn-menu-usuario" data-cy="btn-menu-usuario" aria-haspopup="true" aria-expanded="false">
+              Administrador
+              <svg class="ico ico-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="dropdown" id="dropdown-usuario" data-cy="dropdown-usuario" hidden>
+              <button data-cy="menu-usuario-perfil" data-modulo="M01">Mi perfil</button>
+              <button data-cy="menu-usuario-salir" data-modulo="M01">Cerrar sesión</button>
+            </div>
+          </div>
+          <div class="avatar-admin" aria-hidden="true">AD</div>
+        </div>
+      </header>
+
+      <!-- Menú lateral -->
+      <aside class="admin-sidebar">
+        <nav class="admin-nav" data-cy="admin-nav">
+          <button class="admin-nav-btn active" data-seccion="dashboard" data-cy="menu-dashboard">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+            Dashboard
+          </button>
+          <button class="admin-nav-btn" data-seccion="disponibilidad" data-cy="menu-disponibilidad">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg>
+            Disponibilidad
+          </button>
+          <button class="admin-nav-btn" data-seccion="tipos-evento" data-cy="menu-tipos-evento">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9-9-9z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>
+            Tipos de evento
+          </button>
+          <button class="admin-nav-btn" data-seccion="agenda" data-cy="menu-agenda">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4M7 13h2M11 13h2M15 13h2M7 17h2M11 17h2"/></svg>
+            Agenda y reservas
+          </button>
+          <button class="admin-nav-btn" data-seccion="mensajes" data-cy="menu-mensajes">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+            Mensajes
+          </button>
+          <button class="admin-nav-btn" data-seccion="configuracion" data-cy="menu-configuracion">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>
+            Configuración
+          </button>
+        </nav>
+
+        <div class="sidebar-ayuda">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></svg>
+          <div>
+            <p>¿Necesitas ayuda?</p>
+            <button class="link-btn" id="btn-centro-ayuda" data-cy="btn-centro-ayuda">Centro de ayuda</button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Contenido -->
+      <div class="admin-main">
+
+        <!-- ================= DASHBOARD ================= -->
+        <section class="admin-seccion" id="seccion-dashboard" data-cy="seccion-dashboard">
+          <h1 class="admin-titulo">Dashboard</h1>
+
+          <div class="kpi-grid">
+            <article class="card kpi-card" data-cy="kpi-card-hoy">
+              <div>
+                <p class="kpi-label">Reservas de hoy</p>
+                <p class="kpi-valor" id="kpi-hoy" data-cy="kpi-hoy">0</p>
+                <p class="kpi-delta" id="kpi-hoy-delta" data-cy="kpi-hoy-delta"></p>
+              </div>
+              <span class="kpi-icono"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4M8 14h8"/></svg></span>
+            </article>
+
+            <article class="card kpi-card" data-cy="kpi-card-semana">
+              <div>
+                <p class="kpi-label">Reservas de la semana</p>
+                <p class="kpi-valor" id="kpi-semana" data-cy="kpi-semana">0</p>
+                <p class="kpi-delta" id="kpi-semana-delta" data-cy="kpi-semana-delta"></p>
+              </div>
+              <span class="kpi-icono"><svg class="ico ico-grueso" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 20v-6M12 20V8M18 20V4"/></svg></span>
+            </article>
+
+            <article class="card kpi-card" data-cy="kpi-card-proxima">
+              <div>
+                <p class="kpi-label">Próxima reserva</p>
+                <p class="kpi-valor" id="kpi-proxima-hora" data-cy="kpi-proxima-hora">—</p>
+                <p class="kpi-cliente" id="kpi-proxima-cliente" data-cy="kpi-proxima-cliente"></p>
+                <p class="kpi-sub" id="kpi-proxima-evento" data-cy="kpi-proxima-evento"></p>
+              </div>
+              <span class="kpi-icono"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+            </article>
+          </div>
+
+          <div class="dash-grid">
+            <article class="card" data-cy="card-alertas">
+              <header class="card-header">
+                <h2>Alertas recientes</h2>
+                <button class="link-btn" id="btn-ver-todas-alertas" data-cy="btn-ver-todas-alertas">Ver todas</button>
+              </header>
+              <ul class="lista-alertas" id="lista-alertas" data-cy="lista-alertas"></ul>
+              <p class="empty-inline" id="msg-sin-alertas" data-cy="msg-sin-alertas" hidden>No hay alertas recientes.</p>
+            </article>
+
+            <article class="card" data-cy="card-accesos">
+              <header class="card-header"><h2>Accesos rápidos</h2></header>
+              <div class="accesos-grid">
+                <button class="acceso" data-ir="disponibilidad" data-cy="acceso-disponibilidad">
+                  <span class="acceso-icono"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg></span>
+                  Gestionar disponibilidad
+                </button>
+                <button class="acceso" data-ir="tipos-evento" data-cy="acceso-tipo-evento">
+                  <span class="acceso-icono"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9-9-9z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg></span>
+                  Crear tipo de evento
+                </button>
+                <button class="acceso" data-ir="agenda" data-cy="acceso-agenda">
+                  <span class="acceso-icono"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4M7 13h2M11 13h2M15 13h2M7 17h2M11 17h2"/></svg></span>
+                  Ver agenda
+                </button>
+                <button class="acceso" data-ir="mensajes" data-cy="acceso-plantillas">
+                  <span class="acceso-icono"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.8 7L3 21l2-6A8 8 0 1 1 21 12z"/><path d="M8 11h8M8 14h5"/></svg></span>
+                  Plantillas de mensajes
+                </button>
+              </div>
+            </article>
+          </div>
+
+          <article class="card" data-cy="card-agenda-hoy">
+            <header class="card-header">
+              <h2>Agenda de hoy</h2>
+              <button class="btn-outline" id="btn-ver-agenda-completa" data-cy="btn-ver-agenda-completa">Ver agenda completa</button>
+            </header>
+            <div class="tabla-wrap">
+              <table class="tabla" data-cy="tabla-agenda-hoy">
+                <thead><tr><th>Hora</th><th>Tipo de evento</th><th>Cliente / Invitado</th><th>Estado</th></tr></thead>
+                <tbody id="tbody-agenda-hoy"></tbody>
+              </table>
+            </div>
+            <p class="empty-inline" id="msg-sin-agenda-hoy" data-cy="msg-sin-agenda-hoy" hidden>No hay reservas para hoy.</p>
+          </article>
+        </section>
+
+        <!-- ================= AGENDA Y RESERVAS ================= -->
+        <section class="admin-seccion" id="seccion-agenda" data-cy="seccion-agenda" hidden>
+          <h1 class="admin-titulo">Agenda y reservas</h1>
+          <p class="nota-modulo">Vista de consulta. Cancelar, reagendar y marcar estados corresponde al Módulo 5 (M05).</p>
+          <article class="card">
+            <div class="tabla-wrap">
+              <table class="tabla" data-cy="tabla-agenda-completa">
+                <thead><tr><th>N.º</th><th>Fecha</th><th>Hora</th><th>Tipo de evento</th><th>Cliente / Invitado</th><th>Estado</th></tr></thead>
+                <tbody id="tbody-agenda-completa"></tbody>
+              </table>
+            </div>
+          </article>
+        </section>
+
+        <!-- ================= TIPOS DE EVENTO (solo lectura) ================= -->
+        <section class="admin-seccion" id="seccion-tipos-evento" data-cy="seccion-tipos-evento" hidden>
+          <h1 class="admin-titulo">Tipos de evento</h1>
+          <p class="nota-modulo">Vista de consulta. Crear, editar y eliminar tipos de evento corresponde al Módulo 3 (M03).</p>
+          <article class="card">
+            <div class="tabla-wrap">
+              <table class="tabla" data-cy="tabla-tipos-evento">
+                <thead><tr><th>Nombre</th><th>Duración</th><th>Modalidad</th><th>Ubicación</th><th>Estado</th></tr></thead>
+                <tbody id="tbody-tipos-evento"></tbody>
+              </table>
+            </div>
+          </article>
+        </section>
+
+        <!-- ================= SECCIONES DE OTROS MÓDULOS ================= -->
+        <section class="admin-seccion" id="seccion-disponibilidad" data-cy="seccion-disponibilidad" hidden>
+          <h1 class="admin-titulo">Disponibilidad</h1>
+          <div class="card placeholder-modulo">
+            <p><strong>Módulo 2 — Gestión de Disponibilidad.</strong></p>
+            <p class="muted">Esta sección la desarrolla otro equipo. En el prototipo la disponibilidad es fija: lunes a viernes de 09:00 a 17:00.</p>
+          </div>
+        </section>
+
+        <section class="admin-seccion" id="seccion-configuracion" data-cy="seccion-configuracion" hidden>
+          <h1 class="admin-titulo">Configuración</h1>
+          <div class="card placeholder-modulo">
+            <p><strong>Módulo 1 — Autenticación y Perfil de Administrador.</strong></p>
+            <p class="muted">Esta sección la desarrolla otro equipo (perfil, zona horaria, enlace público).</p>
+          </div>
+        </section>
+
+        <!-- ================= MENSAJES (M06) ================= -->
+        <section class="admin-seccion" id="seccion-mensajes" data-cy="seccion-mensajes" hidden>
+          <h1 class="admin-titulo">Mensajes</h1>
+
+          <div class="subtabs" role="tablist">
+            <button class="subtab active" id="tab-plantillas" data-cy="tab-plantillas" role="tab">Plantillas de mensajes</button>
+            <button class="subtab" id="tab-enviadas" data-cy="tab-enviadas" role="tab">Notificaciones enviadas</button>
+          </div>
+
+          <!-- Plantillas (US-01-01 a US-01-07) -->
+          <div id="panel-plantillas" data-cy="panel-plantillas">
+            <div class="admin-header">
+              <h2>Plantillas de Mensajes</h2>
+              <button class="btn-primary btn-auto" id="btn-crear-plantilla" data-cy="btn-crear-plantilla">+ Crear nueva plantilla</button>
+            </div>
+
+            <div class="filtros-row">
+              <input type="text" id="filtro-nombre" data-cy="filtro-nombre" placeholder="Buscar por nombre..." />
+              <select id="filtro-categoria" data-cy="filtro-categoria">
+                <option value="">Todas las categorías</option>
+                <option value="confirmacion">Confirmación</option>
+                <option value="cancelacion">Cancelación</option>
+                <option value="recordatorio">Recordatorio</option>
+                <option value="reagendado">Reagendado</option>
+              </select>
+            </div>
+
+            <p class="error-msg" id="error-plantillas" data-cy="error-plantillas" role="alert" hidden></p>
+
+            <div class="tabla-plantillas" id="tabla-plantillas" data-cy="tabla-plantillas"></div>
+            <p class="empty-msg" id="msg-sin-plantillas" data-cy="msg-sin-plantillas" hidden></p>
+          </div>
+
+          <!-- Envío simulado + historial -->
+          <div id="panel-enviadas" data-cy="panel-enviadas" hidden>
+            <div class="simular-envio-card">
+              <h3>Simular envío de notificación</h3>
+              <div class="simular-envio-row">
+                <label>Reserva
+                  <select id="select-reserva" data-cy="select-reserva"></select>
+                </label>
+                <label>Plantilla
+                  <select id="select-plantilla-envio" data-cy="select-plantilla-envio"></select>
+                </label>
+                <button class="btn-primary" id="btn-simular-envio" data-cy="btn-simular-envio">Enviar notificación</button>
+              </div>
+              <p class="error-msg" id="error-simular-envio" data-cy="error-simular-envio" role="alert" hidden></p>
+            </div>
+
+            <div class="tabla-enviadas" id="tabla-enviadas" data-cy="tabla-enviadas"></div>
+            <p class="empty-msg" id="msg-sin-enviadas" data-cy="msg-sin-enviadas">Todavía no se envió ninguna notificación.</p>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal crear / editar / duplicar plantilla -->
+  <div class="modal-overlay" id="modal-plantilla" data-cy="modal-plantilla" hidden>
+    <div class="modal-box modal-box-lg" role="dialog" aria-modal="true" aria-labelledby="modal-plantilla-titulo">
+      <h3 id="modal-plantilla-titulo" data-cy="modal-plantilla-titulo">Nueva plantilla</h3>
+
+      <div id="selector-categoria-wrap" data-cy="selector-categoria-wrap">
+        <p class="muted">Elegí una categoría base para empezar</p>
+        <div class="categorias-grid" id="categorias-grid" data-cy="categorias-grid"></div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="btn-cancelar-categoria" data-cy="btn-cancelar-categoria">Cancelar</button>
+        </div>
+      </div>
+
+      <form id="form-plantilla" data-cy="form-plantilla" novalidate hidden>
+        <label>Nombre de la plantilla *
+          <input type="text" id="pl-nombre" data-cy="pl-nombre" />
+        </label>
+        <label>Asunto *
+          <input type="text" id="pl-asunto" data-cy="pl-asunto" />
+        </label>
+        <label>Cuerpo del mensaje <span id="pl-cuerpo-req">*</span>
+          <textarea id="pl-cuerpo" data-cy="pl-cuerpo" rows="6"></textarea>
+        </label>
+        <div class="variables-chips" data-cy="variables-disponibles">
+          <span class="muted small">Etiquetas dinámicas:</span>
+          <div id="variables-chips"></div>
+        </div>
+        <label>Firma <span id="pl-firma-req">*</span>
+          <input type="text" id="pl-firma" data-cy="pl-firma" />
+        </label>
+        <div class="form-row-2">
+          <label>Remitente (opcional)
+            <input type="email" id="pl-remitente" data-cy="pl-remitente" placeholder="no-reply@agendaya.com" />
+          </label>
+          <label>Imagen de encabezado (URL, opcional)
+            <input type="url" id="pl-imagen" data-cy="pl-imagen" placeholder="https://..." />
+          </label>
+        </div>
+        <p class="error-msg" id="error-form-plantilla" data-cy="error-form-plantilla" role="alert" hidden></p>
+
+        <!-- US-01-01: previsualización -->
+        <div id="preview-plantilla" class="preview-plantilla" data-cy="preview-plantilla" hidden>
+          <div class="preview-header">
+            <strong>Vista previa</strong>
+            <button type="button" class="link-btn" id="btn-cerrar-previsualizacion" data-cy="btn-cerrar-previsualizacion">Cerrar previsualización</button>
+          </div>
+          <p class="preview-asunto" data-cy="preview-asunto"></p>
+          <div class="preview-email" data-cy="preview-cuerpo"></div>
+          <p class="preview-faltantes" data-cy="preview-variables-faltantes" hidden></p>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="btn-previsualizar" data-cy="btn-previsualizar">Previsualizar</button>
+          <button type="button" class="btn-secondary" id="btn-cerrar-plantilla" data-cy="btn-cerrar-plantilla">Cancelar</button>
+          <button type="submit" class="btn-primary" id="btn-guardar-plantilla" data-cy="btn-guardar-plantilla">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal confirmar eliminación de plantilla (US-01-04) -->
+  <div class="modal-overlay" id="modal-eliminar-plantilla" data-cy="modal-eliminar-plantilla" hidden>
+    <div class="modal-box" role="dialog" aria-modal="true">
+      <p class="modal-pregunta" data-cy="mensaje-confirmar-eliminar">¿Está seguro que desea eliminar esta plantilla? Esta acción no se puede deshacer.</p>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="btn-cancelar-eliminar" data-cy="btn-cancelar-eliminar">Cancelar</button>
+        <button class="btn-danger" id="btn-si-eliminar" data-cy="btn-si-eliminar">Sí, eliminar</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- Pop-up genérico (mensajes de las historias de usuario) -->
+<div class="modal-overlay" id="popup" data-cy="popup" hidden>
+  <div class="modal-box popup-box" role="alertdialog" aria-modal="true" aria-labelledby="popup-mensaje">
+    <div class="popup-icono" id="popup-icono" aria-hidden="true"></div>
+    <p id="popup-mensaje" data-cy="popup-mensaje"></p>
+    <button class="btn-primary" id="popup-cerrar" data-cy="popup-cerrar">Entendido</button>
+  </div>
+</div>
+
+<!-- Toast de confirmación (esquina inferior derecha) -->
+<div class="toast" id="toast" data-cy="toast" role="status" hidden>
+  <span class="toast-icono" aria-hidden="true">&#10003;</span>
+  <span id="toast-texto" data-cy="toast-texto"></span>
+  <button class="toast-cerrar" id="toast-cerrar" data-cy="toast-cerrar" aria-label="Cerrar">&times;</button>
+</div>
+
+<!-- La lógica de negocio vive en /src para poder testearla con Jest -->
+<script src="../src/logica-negocio.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
