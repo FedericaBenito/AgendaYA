@@ -27,8 +27,9 @@ function validarEmail(email) {
  */
 function validarDNI(dni) {
   if (typeof dni !== "string" && typeof dni !== "number") return false;
-  const limpio = String(dni).trim().replace(/\./g, "");
-  return /^\d{7,8}$/.test(limpio);
+  // Corrección TP6: los puntos solo se aceptan como separador de miles
+  // en las dos posiciones correctas (antes se borraban todos y "3.0.1.2.3.4.5.6" era válido).
+  return /^(\d{7,8}|\d{1,2}\.\d{3}\.\d{3})$/.test(String(dni).trim());
 }
 
 /**
@@ -61,7 +62,10 @@ function validarCamposObligatorios(datos, camposObligatorios) {
  * @returns {boolean}
  */
 function esFechaValida(fecha, ahora = new Date()) {
-  const f = fecha instanceof Date ? fecha : new Date(fecha);
+  // Corrección TP6: "YYYY-MM-DD" sin hora se interpreta a las 00:00 LOCAL.
+  // new Date("2026-10-06") usa UTC y en Argentina equivale al día anterior a las 21 hs.
+  const soloFecha = typeof fecha === "string" && /^\d{4}-\d{2}-\d{2}$/.test(fecha);
+  const f = fecha instanceof Date ? fecha : new Date(soloFecha ? `${fecha}T00:00:00` : fecha);
   if (isNaN(f.getTime())) return false;
   return f.getTime() > ahora.getTime();
 }
@@ -75,11 +79,15 @@ function esFechaValida(fecha, ahora = new Date()) {
  * @returns {string[]} lista de horarios "HH:MM"
  */
 function generarSlots(horaInicio, horaFin, duracionMin) {
-  if (!horaInicio || !horaFin || !duracionMin || duracionMin <= 0) return [];
+  // Corrección TP6: la duración tiene que ser un entero positivo (con 22.5 se
+  // generaba "09:22.5") y las horas tienen que ser "HH:MM" entre 00:00 y 23:59
+  // (con "25:00" se generaban turnos "24:00" y "24:30").
+  const HORA_VALIDA = /^([01]\d|2[0-3]):[0-5]\d$/;
+  if (!HORA_VALIDA.test(horaInicio) || !HORA_VALIDA.test(horaFin)) return [];
+  if (!Number.isInteger(duracionMin) || duracionMin <= 0) return [];
 
   const [hIni, mIni] = horaInicio.split(":").map(Number);
   const [hFin, mFin] = horaFin.split(":").map(Number);
-  if ([hIni, mIni, hFin, mFin].some((n) => Number.isNaN(n))) return [];
 
   let minutosInicio = hIni * 60 + mIni;
   const minutosFin = hFin * 60 + mFin;
