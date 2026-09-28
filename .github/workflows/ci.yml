@@ -12,6 +12,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    # Todos los comandos "run" se ejecutan dentro de la carpeta de los tests del TP4
+    defaults:
+      run:
+        working-directory: "Test Unitarios TP4"
+
     steps:
       - name: Checkout código
         uses: actions/checkout@v4
@@ -44,5 +49,5 @@ jobs:
         with:
           name: test-results
           path: |
-            build/reports/tests/test
-            build/test-results/test
+            Test Unitarios TP4/build/reports/tests/test
+            Test Unitarios TP4/build/test-results/test
