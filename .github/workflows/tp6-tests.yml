@@ -1,0 +1,59 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# CI del TP6: corre los tests unitarios (Jest) y los E2E (Cypress) en cada push.
+# IMPORTANTE: este archivo tiene que quedar en la RAÍZ del repositorio:
+#   AgendaYA/.github/workflows/tp6-tests.yml
+# (GitHub solo lee workflows de esa carpeta). El proyecto vive en la subcarpeta
+# "Prototipo Web - TP6", por eso se usa working-directory.
+# ─────────────────────────────────────────────────────────────────────────────
+name: TP6 - Tests (Jest + Cypress)
+
+on:
+  push:
+    branches: ["main"]
+    paths: ["Prototipo Web - TP6/**", ".github/workflows/tp6-tests.yml"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+env:
+  TZ: America/Argentina/Buenos_Aires
+
+jobs:
+  unitarios:
+    name: Tests unitarios (Jest)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: "Prototipo Web - TP6"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Instalar dependencias (sin el binario de Cypress)
+        run: npm ci
+        env:
+          CYPRESS_INSTALL_BINARY: 0
+      - name: Correr Jest con cobertura
+        run: npm run test:coverage
+
+  e2e:
+    name: Tests E2E (Cypress)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: "Prototipo Web - TP6"
+          start: npm start
+          wait-on: "http://127.0.0.1:5500/frontend/index.html"
+          browser: chrome
+      - name: Subir videos y capturas como evidencia
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidencia-cypress
+          path: |
+            Prototipo Web - TP6/cypress/videos
+            Prototipo Web - TP6/cypress/screenshots

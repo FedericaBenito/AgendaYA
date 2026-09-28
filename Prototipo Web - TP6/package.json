@@ -6,16 +6,25 @@
   "scripts": {
     "start": "http-server . -p 5500 -c-1",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "cy:open": "cypress open",
-    "cy:run": "cypress run"
+    "cy:run": "cypress run",
+    "e2e": "start-server-and-test start http://127.0.0.1:5500/frontend/index.html cy:run"
   },
   "devDependencies": {
     "cypress": "^13.0.0",
     "http-server": "^14.1.1",
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "start-server-and-test": "^2.0.8"
   },
   "jest": {
     "testEnvironment": "node",
-    "testMatch": ["**/tests/**/*.test.js"]
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
+    "globalSetup": "./tests/jest.global-setup.js",
+    "collectCoverageFrom": [
+      "src/**/*.js"
+    ]
   }
 }
