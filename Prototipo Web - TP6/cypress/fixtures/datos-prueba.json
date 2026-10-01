@@ -1,0 +1,18 @@
+{
+  "fechaSistema": "2026-10-05T08:00:00",
+  "diaReserva": "2026-10-06",
+  "horaReserva": "10:00",
+  "cliente": {
+    "nombre": "Juan",
+    "apellido": "Pérez",
+    "dni": "30123456",
+    "email": "juanperez@correo.com",
+    "telefono": "+54 11 5555-1234"
+  },
+  "plantilla": {
+    "nombre": "Confirmación VIP",
+    "asunto": "Reunión confirmada",
+    "cuerpo": "Estimado {{nombre_cliente}}, tu reserva {{numero_reserva}} del {{fecha_reserva}} a las {{hora_reserva}} fue confirmada.",
+    "firma": "Equipo AgendaYA"
+  }
+}

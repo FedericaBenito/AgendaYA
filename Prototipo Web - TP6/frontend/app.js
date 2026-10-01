@@ -656,6 +656,10 @@
     if (ingresado !== reserva.codigo) return mostrarError(errorCodigo, MSG.codigoIncorrecto);
     ocultarError(errorCodigo);
     reserva.emailVerificado = true;
+    // Corrección TP6 (detectada por test E2E M04-03): las 12 hs para confirmar se
+    // cuentan desde el envío del link "Confirmar Reserva" (CP-US01-001 / US-08),
+    // no desde la creación de la reserva.
+    reserva.fechaEnvioConfirmacion = new Date();
     notificar("pendiente", reserva); // US-08 E1: mail con botón "Confirmar Reserva"
     mostrarEstado("estado-verificado");
   });
@@ -853,7 +857,7 @@
     expirada: "Expirada", completada: "Completada",
   };
   const badgeEstado = (estado) =>
-    `<span class="estado-badge estado-${estado}" data-cy="estado-${estado}">${ESTADO_LABEL[estado] || estado}</span>`;
+    `<span class="estado-badge estado-${estado}" data-cy="badge-estado-${estado}">${ESTADO_LABEL[estado] || estado}</span>`;
 
   function textoDelta(diferencia, referencia) {
     if (diferencia > 0) return { texto: `↑ +${diferencia} vs. ${referencia}`, clase: "" };
