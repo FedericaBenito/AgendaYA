@@ -69,3 +69,17 @@ describe("escaparHtml y esUrlImagenValida", () => {
     expect(esUrlImagenValida(null)).toBe(false);
   });
 });
+
+test("HOTFIX INC-M6-Inyeccion-html: el cuerpo del email debe escapar etiquetas HTML en las variables del cliente para evitar inyección", () => {
+  // Arrange: Simulamos una entrada maliciosa con etiquetas HTML
+  const datosMaliciosos = { cuerpo: "Hola <h1>Usuario Malicioso</h1>" };
+
+  // Act: Renderizamos el email aplicando la lógica actual
+  const htmlRenderizado = renderizarEmailHtml(datosMaliciosos);
+
+  // Assert: Verificamos que la etiqueta HTML cruda NO aparezca en el resultado
+  expect(htmlRenderizado).not.toContain("<h1>Usuario Malicioso</h1>");
+
+  // Assert: Verificamos que se haya escapado correctamente a entidades seguras
+  expect(htmlRenderizado).toContain("&lt;h1&gt;Usuario Malicioso&lt;/h1&gt;");
+});
