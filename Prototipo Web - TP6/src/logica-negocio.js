@@ -233,7 +233,7 @@ function nombrePlantillaDuplicado(nombre, plantillas, idExcluir = null) {
  */
 function escaparHtml(texto) {
 
-  return texto
+  return texto;
 }
 
 // ---------- Reservas: numeración, rangos y próxima reserva ----------
