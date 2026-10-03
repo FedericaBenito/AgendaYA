@@ -9,10 +9,10 @@ name: TP6 - Tests (Jest + Cypress)
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "develop", "hotfix/**"]
     paths: ["Prototipo Web - TP6/**", ".github/workflows/tp6-tests.yml"]
   pull_request:
-    branches: ["main"]
+    branches: ["main", "develop"]
   workflow_dispatch:
 
 env:
