@@ -232,13 +232,8 @@ function nombrePlantillaDuplicado(nombre, plantillas, idExcluir = null) {
  * @returns {string}
  */
 function escaparHtml(texto) {
-  if (texto === undefined || texto === null) return "";
-  return String(texto)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
+
+  return texto
 }
 
 // ---------- Reservas: numeración, rangos y próxima reserva ----------
