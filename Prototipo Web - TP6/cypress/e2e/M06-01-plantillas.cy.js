@@ -84,7 +84,7 @@ describe("AgendaYA - M06 Notificaciones · Plantillas de mensajes", () => {
     // Assert (responde la pregunta abierta del CP-005: la unicidad NO distingue mayúsculas)
     cy.dataCy("error-form-plantilla").should(
       "have.text",
-      "Ya existe una plantilla con ese nombre. Por favor ingrese un nombre distinto."
+      "Ya existe una plantilla con ese nombre. Por favor ingrese un nombre distinto.",
     );
     cy.get('[data-cy^="plantilla-row-"]').should("have.length", 3);
   });

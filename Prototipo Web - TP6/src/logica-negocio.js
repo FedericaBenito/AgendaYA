@@ -135,7 +135,7 @@ function horarioOcupado(reservas, fecha, hora) {
     (r) =>
       r.fecha === fecha &&
       r.hora === hora &&
-      !ESTADOS_QUE_LIBERAN_HORARIO.includes(r.estado)
+      !ESTADOS_QUE_LIBERAN_HORARIO.includes(r.estado),
   );
 }
 
@@ -221,7 +221,7 @@ function nombrePlantillaDuplicado(nombre, plantillas, idExcluir = null) {
   if (!nombre || !Array.isArray(plantillas)) return false;
   const normalizado = nombre.trim().toLowerCase();
   return plantillas.some(
-    (p) => p.id !== idExcluir && p.nombre.trim().toLowerCase() === normalizado
+    (p) => p.id !== idExcluir && p.nombre.trim().toLowerCase() === normalizado,
   );
 }
 
@@ -279,7 +279,7 @@ function inicioDeSemana(fechaISO) {
 function filtrarReservasPorRango(reservas, desdeISO, hastaISO, estadosExcluidos = ["cancelada", "expirada"]) {
   if (!Array.isArray(reservas)) return [];
   return reservas.filter(
-    (r) => r.fecha >= desdeISO && r.fecha <= hastaISO && !estadosExcluidos.includes(r.estado)
+    (r) => r.fecha >= desdeISO && r.fecha <= hastaISO && !estadosExcluidos.includes(r.estado),
   );
 }
 
@@ -346,7 +346,7 @@ function esUrlImagenValida(url) {
   try {
     const u = new URL(url.trim());
     return u.protocol === "http:" || u.protocol === "https:";
-  } catch (e) {
+  } catch {
     return false;
   }
 }

@@ -1,5 +1,5 @@
 # ─────────────────────────────────────────────────────────────────────────────
-# CI del TP6: corre los tests unitarios (Jest) y los E2E (Cypress) en cada push.
+# CI del TP6/TP7: verifica formato, linter, build, tests unitarios (Jest) y E2E (Cypress).
 # IMPORTANTE: este archivo tiene que quedar en la RAÍZ del repositorio:
 #   AgendaYA/.github/workflows/tp6-tests.yml
 # (GitHub solo lee workflows de esa carpeta). El proyecto vive en la subcarpeta
@@ -20,7 +20,7 @@ env:
 
 jobs:
   unitarios:
-    name: Tests unitarios (Jest)
+    name: Calidad + Tests unitarios (Jest)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -34,6 +34,12 @@ jobs:
         run: npm ci
         env:
           CYPRESS_INSTALL_BINARY: 0
+      - name: Verificar formato
+        run: npm run format:check
+      - name: Linter (ESLint)
+        run: npm run lint
+      - name: Build
+        run: echo "Proyecto JavaScript vanilla sin bundler ni transpilador, no requiere build."
       - name: Correr Jest con cobertura
         run: npm run test:coverage
 

@@ -42,7 +42,7 @@ describe("AgendaYA - M06 Notificaciones · Simulación de envío e historial", (
     cy.dataCy("btn-eliminar-p2").click();
     cy.dataCy("error-plantillas").should(
       "have.text",
-      "No es posible eliminar esta plantilla porque está siendo utilizada actualmente."
+      "No es posible eliminar esta plantilla porque está siendo utilizada actualmente.",
     );
     cy.dataCy("modal-eliminar-plantilla").should("not.be.visible");
   });
@@ -80,7 +80,7 @@ describe("AgendaYA - M06 Notificaciones · Simulación de envío e historial", (
     // Assert: se informa la variable faltante y no se envía nada
     cy.dataCy("error-simular-envio").should(
       "have.text",
-      "No se puede enviar: la plantilla usa variables sin datos (codigo_descuento)."
+      "No se puede enviar: la plantilla usa variables sin datos (codigo_descuento).",
     );
     cy.dataCy("msg-sin-enviadas").should("be.visible");
   });
