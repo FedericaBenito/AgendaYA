@@ -37,7 +37,7 @@ describe("AgendaYA - M04 Proceso de Reserva · Confirmación de la reserva", () 
     // Assert (pantalla): pop-up con los datos de la reserva y opción de cancelar
     cy.dataCy("popup-mensaje").should("be.visible").and(
       "have.text",
-      "Juan Pérez su reserva RES-0012, el día Mar 6 de oct, a las 10:00, en Consultorio · Av. Corrientes 1234, CABA, ha sido confirmada exitosamente."
+      "Juan Pérez su reserva RES-0012, el día Mar 6 de oct, a las 10:00, en Consultorio · Av. Corrientes 1234, CABA, ha sido confirmada exitosamente.",
     );
     cy.dataCy("popup-cerrar").click();
     cy.dataCy("estado-confirmada").should("be.visible");

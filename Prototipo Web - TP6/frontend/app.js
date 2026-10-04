@@ -279,7 +279,7 @@
         email: `${nombre}.${apellido}@mail.com`.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
         emailVerificado: estado !== "pendiente",
         fechaEnvioConfirmacion: new Date(ahora - 2 * 60 * 60 * 1000),
-      })
+      }),
     );
     const buscar = (nombre) => creadas.find((r) => r.nombre === nombre);
     registrarAlerta("nueva", buscar("Ana"), new Date(ahora - 60 * 60 * 1000));
@@ -727,7 +727,7 @@
       listaEventos.hidden = false;
       renderEventos();
       mostrarPaso(1);
-    })
+    }),
   );
 
   // ============================================================
@@ -746,13 +746,13 @@
   }
 
   document.querySelectorAll(".admin-nav-btn").forEach((b) =>
-    b.addEventListener("click", () => irASeccion(b.dataset.seccion))
+    b.addEventListener("click", () => irASeccion(b.dataset.seccion)),
   );
   document.querySelectorAll("[data-ir]").forEach((b) =>
     b.addEventListener("click", () => {
       irASeccion(b.dataset.ir);
       if (b.dataset.ir === "mensajes") cambiarTabMensajes("plantillas");
-    })
+    }),
   );
   $("btn-ver-agenda-completa").addEventListener("click", () => irASeccion("agenda"));
 
@@ -792,7 +792,7 @@
     b.addEventListener("click", () => {
       dropdownUsuario.hidden = true;
       mostrarToast(MSG.moduloExterno(b.dataset.modulo));
-    })
+    }),
   );
   $("btn-centro-ayuda").addEventListener("click", () => mostrarToast("El centro de ayuda no forma parte de este prototipo."));
 
@@ -805,7 +805,7 @@
     if (q.length < 2) { resultados.hidden = true; return; }
 
     const encontradasReservas = reservas.filter((r) =>
-      [nombreCompleto(r), r.eventoNombre, r.numero].some((t) => t.toLowerCase().includes(q))
+      [nombreCompleto(r), r.eventoNombre, r.numero].some((t) => t.toLowerCase().includes(q)),
     ).slice(0, 6);
     const encontradasPlantillas = plantillas.filter((p) => p.nombre.toLowerCase().includes(q)).slice(0, 4);
 
@@ -1012,7 +1012,7 @@
     const texto = filtroNombre.value.trim().toLowerCase();
     const categoria = filtroCategoria.value;
     const filtradas = plantillas.filter(
-      (p) => (!texto || p.nombre.toLowerCase().includes(texto)) && (!categoria || p.categoria === categoria)
+      (p) => (!texto || p.nombre.toLowerCase().includes(texto)) && (!categoria || p.categoria === categoria),
     );
 
     tablaPlantillas.innerHTML = "";
